@@ -14,7 +14,7 @@ download_images_path = "download/"
 #the name of the images.
 #"original" for the original name,
 #"order" for a ordered number (from the newest to oldest)
-download_images_name = "order"
+download_images_name = "original"
 
 #the session cookies
 cookie_GyazoSession = 'YOUR COOKIE HERE'

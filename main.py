@@ -8,25 +8,25 @@ __description__ = 'Main UI to the gyazoCrawler.py class'
 
 #files and folders
 #the databse file, will overwrite (must exist) [@todo cerate the file]
-database_file_path = "database.json"
+DATABASE_FILE_PATH = "database.json"
 #the path where images will be downloaded (must exist) [@todo cerate the directory]
-download_images_path = "download/"
+DOWNLOAD_IMAGES_PATH = "download/"
 #the name of the images.
 #"original" for the original name,
 #"order" for a ordered number (from the newest to oldest)
-download_images_name = "original"
+DOWNLOAD_IMAGES_NAME = "original"
 
 #the session cookies
-cookie_GyazoSession = 'YOUR COOKIE HERE'
-cookie_ga = 'YOUR COOKIE HERE'
-cookie_gat = '1'
+COOKIE_GYAZOSESSION = 'YOUR COOKIE HERE'
+COOKIE_GA = 'YOUR COOKIE HERE'
+COOKIE_GAT = '1'
 
 #Gyazo cloud tab to be indexed.
 #uploaded gyazos: "history"
 #the gyazos you visit (from other users): "visits"
 #your favorites: "favorites"
 #for custom tabs use their UID ex: "8ag1adb8a8b1b0680f15ea5b6bc65t26"
-gyazo_tab_to_index = "history"
+GYAZO_TAB_TO_INDEX = "history"
 
 ##########################
 
@@ -43,21 +43,21 @@ while True:
 	inp = raw_input()
 
 	if inp == "1":
-		result = gyazoCrawler.indexGyazos(gyazo_tab_to_index, cookie_ga, cookie_gat, cookie_GyazoSession, database_file_path)
+		result = gyazoCrawler.indexGyazos(GYAZO_TAB_TO_INDEX, COOKIE_GA, COOKIE_GAT, COOKIE_GYAZOSESSION, DATABASE_FILE_PATH)
 		print "\nDone!"
 		print str(result["pages"]) + " pages;"
 		print str(result["imageCount"]) + " images;"
 		print "in {0:.2f} seconds".format(result["time"])
 
 	elif inp == "2":
-		result = gyazoCrawler.getSize(database_file_path)
+		result = gyazoCrawler.getSize(DATABASE_FILE_PATH)
 		print "\n" + str(result["size"]) + " MB (" + str(result["size_bytes"]) + " bytes) - " + str(result["countProcessed"]) + " images processed (out of " + str(result["countTotal"]) + ")"
 		print "(Note: some images don't have the size atribute so, some are processed and other don't. But this will download them all!)"
 		print "Do you wish to download? (y/*)"
 		inp = raw_input().lower()
 
 		if inp == "y":
-			result = gyazoCrawler.downloadImages(download_images_path, download_images_name, database_file_path)
+			result = gyazoCrawler.downloadImages(DOWNLOAD_IMAGES_PATH, DOWNLOAD_IMAGES_NAME, DATABASE_FILE_PATH)
 			print "\nDone!\nTime elapsed: {0:.2f} seconds".format(result["time"]);
 			print "Downloaded " + str(result["count"]) + " images"
 

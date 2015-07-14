@@ -13,7 +13,6 @@ Disclaimer
 I'm not affiliated with Gyazo in any way.
 
 For the Gyazo team/company:
- - You guys are awesome;
  - I could not find anything that explicitly said, that this practice of recovering and downloading old *gyazos* was against your policy.
  - I completely understand that you may not like this, if you want to stop it you should  remove 
 ```"url"```,```"permalink_url"``` and ```"permalink_path"``` 

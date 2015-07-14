@@ -11,17 +11,14 @@ import time
 import sys
 import requests	
 import urllib
-import urllib2
 
 ##########################
 
 def getSize(database_file):
-	#vars
 	countProcessed = 0
 	countTotal = 0
 	totalbytes = 0
 	
-	#get the starting time
 	startTime = time.time()
 
 	with open(database_file) as inFile:	
@@ -47,33 +44,25 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 	page = 1
 	imageCount = 0
 
-	#set http vars
 	headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0"}
 	cookies = {"_ga": cookie_ga,"Gyazo_session": cookie_GyazoSession,"_gat": cookie_gat}
 
-	#get the starting time
 	startTime = time.time()
 
 	while True:
-		#generate the url
 		url = "https://gyazo.com/tabs/" + index_tab + "/images.json?page=" + str(page)
 		
 		print ("downloading page " + str(page) + "...")
 
-		#get the file
 		resp = requests.get(url, headers=headers, cookies=cookies)
-
-		#get the json object
 		jsonResp = resp.json()
 
 		if resp.text == "[]" and len(jsonResp) == 0:
 			print "... " + str(page) + " is empty! Terminating!"
 			break
 
-		#for all images in the page
 		for imageIn in jsonResp:
 			imageCount += 1
-			#copy the relevant info
 			imageOut = {
 				"page": page,
 				"created_at": imageIn["created_at"],
@@ -86,17 +75,14 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 				"large_thumb_url": imageIn["large_thumb_url"],
 				"search_thumb_url": imageIn["search_thumb_url"]
 			}
-			#add it to the array
 			jsonData.append(imageOut)
 		#end of for each image
 
 		print "...done"
 
-		#ibcrememt page
 		page += 1
 	#end of while
 
-	#save the data
 	with open(database_file, 'w') as outfile:
 		json.dump(jsonData, outfile, ensure_ascii=True, sort_keys=False, indent=1)
 
@@ -115,7 +101,6 @@ def downloadImages(downloadPath, file_name_type, database_file):
 
 	count = 1
 
-	#get the starting time
 	startTime = time.time()
 
 	with open(database_file) as inFile:	

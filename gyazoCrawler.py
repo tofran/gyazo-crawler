@@ -2,7 +2,7 @@
 
 __author__ = 'ToFran'
 __site__ = 'http://tofran.com/'
-__description__ = 'This simple library crawles a Gyazo.com account, in order to index and download you gyazo history'
+__description__ = 'This simple library indexes and downloads your gyazo history'
 
 ##########################
 
@@ -13,6 +13,9 @@ import requests
 import urllib
 import os
 import os.path
+import multiprocessing
+from threading import Thread
+from Queue import Queue
 
 ##########################
 
@@ -50,6 +53,10 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 	rs = {"error": True}
 	page = 1
 	imageCount = 0
+
+	if cookie_ga== "" or cookie_gat== "" or cookie_gat== "":
+		rs["error_message"] = "cookies are empty!"
+		return rs
 
 	try:
 		outfile = open(database_file, 'w+')
@@ -96,7 +103,6 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 		page += 1
 	#end of while
 
-	#with open(database_file, 'w') as outfile:
 	json.dump(jsonData, outfile, ensure_ascii=True, sort_keys=False, indent=1)
 	outfile.close()
 
@@ -108,7 +114,7 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 	return rs
 #####
 
-def downloadImages(downloadPath, file_name_type, database_file):
+def downloadImages(downloadPath, file_name_type, thread_number, database_file):
 	originalName = True
 	if file_name_type == "order":
 		originalName = False
@@ -129,18 +135,37 @@ def downloadImages(downloadPath, file_name_type, database_file):
 		return rs
 
 	print "downloading! (this may take a while)"
+	
+	global fila
+	fila = Queue()
 
-	if originalName:
-		for image in data:
-			urllib.urlretrieve(image["url"], downloadPath + image["image_id"] + ".png")
-			count += 1
-	else:
-		for image in data:
-			urllib.urlretrieve(image["url"], downloadPath + str(count) + ".png")
-			count += 1
+	for image in data:
+		if originalName:
+			filePath = downloadPath + image["image_id"] + ".png"
+		else:
+			filePath = downloadPath + str(count) + ".png"
+
+		path = [image["url"], filePath]
+		fila.put(path)
+
+		count += 1
+
+	for i in range(thread_number):
+		t = Thread(target=slave)
+		t.daemon = True
+		t.start()
+
+	fila.join() 
 
 	rs["error"] = False
 	rs["count"] = count
 	rs["time"] = time.time()-startTime	
 	return rs
 ####
+
+def slave():
+	while not fila.empty():
+		item = fila.get()
+		urllib.urlretrieve(item[0], item[1])
+		fila.task_done()
+###

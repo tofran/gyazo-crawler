@@ -5,8 +5,14 @@
 Usage
 --
 Edit the ```main.py``` file variables with your cookies and files/folders. Run it with py2 and you will have 2 main options:
-1. Download/Index database of gyazos - will fetch gyazo.com and create your database of links;
-2. Calculate the size and download the all the images from the DB - will calculate the size from the database file, and then ask if you want them to be downloaded, if so they will go on the specified folder.
+1. Index database of gyazos - will fetch gyazo.com and create your database of links;
+2. Calculate the size and download the all the images from the DB - will calculate the size from the database file, and then ask if you want them to be downloaded, if so they will go on the specified folder. (note that the size value is calculated by the ```"file_size"``` key, and some images may not have this)
+
+
+Dependencies 
+--
+- [Requests] - Python HTTP Requests for Humans
+
 
 Disclaimer
 --
@@ -19,7 +25,11 @@ For the Gyazo team/company:
 from the JSON response
  - If you wish the removal of this repo just tweet me [@tofran_] and I’ll do it as soon as possible.
 
+
 License
 --
 MIT
+
+
 [@tofran_]:https://twitter.com/tofran_
+[requests]:https://github.com/kennethreitz/requests

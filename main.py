@@ -14,7 +14,7 @@ DOWNLOAD_IMAGES_PATH = "download/"
 #the name of the images.
 #"original" for the original name,
 #"order" for a ordered number (from the newest to oldest)
-DOWNLOAD_IMAGES_NAME = "original"
+DOWNLOAD_IMAGES_NAME_TYPE = "original"
 
 #Cookies to acess your account
 # Gyazo_session (not _Gyazo_session)
@@ -31,6 +31,9 @@ COOKIE_GAT = "1"
 #for custom tabs use their UID ex: "8ag1adb8a8b1b0680f15ea5b6bc65t26"
 GYAZO_TAB_TO_INDEX = "history"
 
+#the number of threads used for downloading concurrent images
+NUMBER_OF_THREADS = 12
+
 ##########################
 
 import gyazoCrawler
@@ -44,34 +47,41 @@ def printHelp():
 while True:
 	printHelp()
 	inp = raw_input()
+	error = False
 
 	if inp == "1":
 		result = gyazoCrawler.indexGyazos(GYAZO_TAB_TO_INDEX, COOKIE_GA, COOKIE_GAT, COOKIE_GYAZOSESSION, DATABASE_FILE_PATH)
-		if result["error"] == False:
+		if not result["error"]:
 			print "\nDone!"
 			print str(result["pages"]) + " pages;"
 			print str(result["imageCount"]) + " images;"
 			print "in {0:.2f} seconds".format(result["time"])
+		else:
+			error = True
 
 	elif inp == "2":
 		result = gyazoCrawler.getSize(DATABASE_FILE_PATH)
-		if result["error"] == False:
+		if not result["error"]:
 			print "\n" + str(result["size"]) + " MB (" + str(result["size_bytes"]) + " bytes) - " + str(result["countProcessed"]) + " images processed (out of " + str(result["countTotal"]) + ")"
 			print "(Note: some images don't have the size atribute so, some are processed and other don't. But this will download them all!)"
 			print "Do you wish to download? (y/*)"
 			inp = raw_input().lower()
 
 			if inp == "y":
-				result = gyazoCrawler.downloadImages(DOWNLOAD_IMAGES_PATH, DOWNLOAD_IMAGES_NAME, DATABASE_FILE_PATH)
-				if result["error"] == False:
+				result = gyazoCrawler.downloadImages(DOWNLOAD_IMAGES_PATH, DOWNLOAD_IMAGES_NAME_TYPE, NUMBER_OF_THREADS, DATABASE_FILE_PATH)
+				if not result["error"]:
 					print "\nDone!\nTime elapsed: {0:.2f} seconds".format(result["time"]);
 					print "Downloaded " + str(result["count"]) + " images"
+				else:
+					error = True
+		else:
+			error = True
 
 	elif inp == "3":
 		break
 	#end of menu if's
 
-	if result["error"] == True:
+	if error:
 		print result["error_message"]
 
 #end of while

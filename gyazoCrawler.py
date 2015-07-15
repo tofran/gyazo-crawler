@@ -11,6 +11,8 @@ import time
 import sys
 import requests	
 import urllib
+import os
+import os.path
 
 ##########################
 
@@ -18,11 +20,15 @@ def getSize(database_file):
 	countProcessed = 0
 	countTotal = 0
 	totalbytes = 0
-	
+	rs = {"error": True}
 	startTime = time.time()
 
-	with open(database_file) as inFile:	
-		data = json.load(inFile)
+	try:
+		with open(database_file) as inFile:	
+			data = json.load(inFile)
+	except Exception, e:
+		rs["error_message"] = "Could not open " + database_file
+		return rs
 
 	for image in data:
 		countTotal += 1
@@ -31,7 +37,7 @@ def getSize(database_file):
 			countProcessed += 1
 			totalbytes += file_size
 
-	rs = {}
+	rs["error"] = False 
 	rs["size"] = totalbytes/8388608 #in megabytes
 	rs["size_bytes"] = totalbytes
 	rs["countTotal"] = countTotal
@@ -41,8 +47,15 @@ def getSize(database_file):
 
 def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_file):
 	jsonData = []
+	rs = {"error": True}
 	page = 1
 	imageCount = 0
+
+	try:
+		outfile = open(database_file, 'w+')
+	except Exception, e:
+		rs["error_message"] = "Could not open or create " + database_file
+		return rs
 
 	headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0"}
 	cookies = {"_ga": cookie_ga,"Gyazo_session": cookie_GyazoSession,"_gat": cookie_gat}
@@ -57,7 +70,7 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 		resp = requests.get(url, headers=headers, cookies=cookies)
 		jsonResp = resp.json()
 
-		if resp.text == "[]" and len(jsonResp) == 0:
+		if resp.text == "[]" or len(jsonResp) == 0:
 			print "... " + str(page) + " is empty! Terminating!"
 			break
 
@@ -83,28 +96,37 @@ def indexGyazos(index_tab, cookie_ga, cookie_gat, cookie_GyazoSession, database_
 		page += 1
 	#end of while
 
-	with open(database_file, 'w') as outfile:
-		json.dump(jsonData, outfile, ensure_ascii=True, sort_keys=False, indent=1)
+	#with open(database_file, 'w') as outfile:
+	json.dump(jsonData, outfile, ensure_ascii=True, sort_keys=False, indent=1)
+	outfile.close()
 
-	rs = {}
+	rs["error"] = False 
 	rs["time"] = time.time()-startTime
 	rs["pages"] = page
-	rs["imageCount"] = imageCount	
+	rs["imageCount"] = imageCount
+
 	return rs
 #####
 
 def downloadImages(downloadPath, file_name_type, database_file):
-	originalNmae = True
+	originalName = True
 	if file_name_type == "order":
 		originalName = False
-		
 
 	count = 1
+	rs = {"error": True}
 
 	startTime = time.time()
 
-	with open(database_file) as inFile:	
-		data = json.load(inFile)
+	if not os.path.exists(downloadPath):
+		os.makedirs(downloadPath)
+
+	try:
+		with open(database_file) as inFile:	
+			data = json.load(inFile)
+	except Exception, e:
+		rs["error_message"] = "Could not open " + database_file
+		return rs
 
 	print "downloading! (this may take a while)"
 
@@ -117,8 +139,8 @@ def downloadImages(downloadPath, file_name_type, database_file):
 			urllib.urlretrieve(image["url"], downloadPath + str(count) + ".png")
 			count += 1
 
-	rs = {}
+	rs["error"] = False
 	rs["count"] = count
-	rs["time"] = time.time()-startTime
+	rs["time"] = time.time()-startTime	
 	return rs
 ####

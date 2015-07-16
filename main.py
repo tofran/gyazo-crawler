@@ -39,7 +39,7 @@ NUMBER_OF_THREADS = 12
 import gyazoCrawler
 
 def printHelp():
-	print "\n1 - Download/Index database of gyazos\n" + \
+	print "\n1 - Index database of gyazos\n" + \
 	"2 - Calculate the size and download the all the images from the DB.\n" + \
 	"3 - exit"
 ####

@@ -54,11 +54,12 @@ when you don't have permission to access the image, the key ```"image_id"``` ret
 Dependencies 
 --
 - [Requests] - Python HTTP Requests for Humans
+- From py: multiprocessing, Thread, Queue, urllib, json
 
 
 License
 --
-MIT
+[MIT](LICENSE)
 
 
 [@tofran_]:https://twitter.com/tofran_

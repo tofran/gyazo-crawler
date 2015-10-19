@@ -1,6 +1,8 @@
 # gyazoCrawler
 
-**gyazoCrawler is a python scrip to index and download Gyazo screenshots.**
+**gyazoCrawler is a python scrip to index and download Gyazo screenshots. It worked even without 'ninja', it's fixed now:**
+
+[![Tweet by gyazo @nonamea774](https://i.gyazo.com/3f958e7a41a76eebe45072f94f556d2e.png)](https://twitter.com/nonamea774/status/641555739362791425)
 
 Usage
 --
